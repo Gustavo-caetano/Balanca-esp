@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": "D:/gustt/Downloads/projetos de codigos/pessoais/esp32"
+		},
+		{
+			"name": "Balanca",
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"algorithm": "cpp",
+			"iterator": "cpp",
+			"xhash": "cpp",
+			"xmemory": "cpp",
+			"xtree": "cpp",
+			"xutility": "cpp",
+			"chrono": "cpp"
+		}
+	}
+}
