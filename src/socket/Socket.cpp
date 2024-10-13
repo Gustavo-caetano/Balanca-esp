@@ -1,15 +1,10 @@
 #include "Socket.hpp"
-#include <WiFi.h>
 
 Socket::Socket() : tempo(0), connected(false) {}
 
-void Socket::iniciar(String ssid, String password, String server)
+void Socket::iniciar(String server)
 {
-    this->ssid = ssid;
-    this->passwd = password;
     this->host = server;
-
-    connectWIFI();
     connectSK();
 }
 
@@ -68,30 +63,6 @@ void Socket::checkConnection()
 bool Socket::isConnected()
 {
     return webSocket.available();
-}
-bool Socket::connectWIFI()
-{
-    Serial.println("Tentando conectar ao WiFi...");
-    WiFi.begin(ssid, passwd);
-
-    unsigned long startAttemptTime = millis();
-    while (WiFi.status() != WL_CONNECTED && millis() - startAttemptTime < 10000)
-    {
-        delay(500);
-        Serial.print(".");
-    }
-
-    if (WiFi.status() != WL_CONNECTED)
-    {
-        Serial.println("\nFalha ao conectar ao WiFi!");
-        return false;
-    }
-
-    Serial.println("\nConectado ao WiFi!");
-    Serial.print("Endereço IP: ");
-    Serial.println(WiFi.localIP());
-
-    return true;
 }
 
 bool Socket::connectSK()

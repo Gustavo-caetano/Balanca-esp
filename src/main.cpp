@@ -1,8 +1,10 @@
-#include "Socket.hpp"
-#include "Balanca.hpp"
+#include "socket/Socket.hpp"
+#include "balanca/Balanca.hpp"
+#include "wifi/Wifi.hpp"
 
 Socket socket;
 Balanca balanca;
+Wifi wifi;
 
 bool active = true;
 
@@ -15,10 +17,14 @@ void setup()
 {
   Serial.begin(115200);
   Serial.println("Inicializando...");
+
+  wifi.init(
+    "PROJETO1",
+    "umdoistres"
+  );
+
   socket.iniciar(
-      "SEC. DE OBRAS",
-      "flamengo",
-      "ws://192.168.0.137:15000");
+      "ws://10.0.0.16:15000");
   balanca.iniciar();
 }
 
@@ -29,19 +35,7 @@ void loop()
   if (socket.isConnected())
   {
     float peso = balanca.getPeso();
-    // float peso = count;
     socket.sendData(peso, balanca.isActive());
-    // if (count > 5000)
-    // {
-    //   active = false;
-    //   crescente = false;
-    // }
-    // else if (count == 0)
-    // {
-    //   active = true;
-    //   crescente = true;
-    // }
-    // crescente ? count += 100 : count -= 100;
   }
   delay(20);
 }
