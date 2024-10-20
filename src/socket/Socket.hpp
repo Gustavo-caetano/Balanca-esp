@@ -21,6 +21,7 @@ class Socket{
     bool isConnected();
     bool connectSK();
     void onMenssage(void (*funcao)(String opcao));
+    void poll();
 };
 
 #endif // BLUETOOTH_HPP

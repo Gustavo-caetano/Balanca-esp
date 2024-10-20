@@ -1,39 +1,40 @@
 #include "Balanca.hpp"
 #include <Arduino.h>
 
-#define pinDT  26
-#define pinSCK  27
+#define pinDT 26
+#define pinSCK 27
 
 Balanca::Balanca() : active(false), calibration_factor(277560.00) {}
 
-void Balanca::iniciar() {
+void Balanca::iniciar()
+{
   scale.begin(pinDT, pinSCK);
-  scale.tare();
-  Serial.println("Balança zerada.");
+  tara();
 }
 
-float Balanca::getPeso() {
+float Balanca::getPeso()
+{
+
   scale.set_scale(calibration_factor);
-  
   float peso = scale.get_units() * 1000;
-  if (peso > 10) {
-    active = true;
-  } else if (peso < 10) {
-    active = false;
-  }
+  active = peso > 10;
+
   return peso;
 }
 
-bool Balanca::isActive() {
+bool Balanca::isActive()
+{
   return active;
 }
 
 void Balanca::tara()
 {
   scale.tare();
+  Serial.println("Balança zerada.");
 }
 
-void Balanca::setScale(float calibration) {
+void Balanca::setScale(float calibration)
+{
 
   calibration_factor += calibration;
 };

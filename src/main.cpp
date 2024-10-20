@@ -3,10 +3,12 @@
 #include "socket/Socket.hpp"
 #include "balanca/Balanca.hpp"
 #include "wifi/Wifi.hpp"
+#include "bluetooth/Bluetooth.hpp"
 
 Socket socket;
 Balanca balanca;
 Wifi wifi;
+Bluetooth bluetooth;
 
 void menu(String opcao);
 
@@ -20,6 +22,9 @@ void setup()
       "LUCAS",
       "Lucas65780213");
 
+  // bluetooth.iniciar("MASTER");
+  // bluetooth.connect("FOGO_BT");
+
   socket.iniciar("ws://192.168.0.114:15000");
   socket.onMenssage(menu);
 }
@@ -29,29 +34,33 @@ void loop()
   socket.checkConnection();
   if (socket.isConnected())
   {
-    float peso = balanca.getPeso();
-    socket.sendData(peso, balanca.isActive());
+    socket.poll();
   }
+  float peso = balanca.getPeso();
+  socket.sendData(peso, balanca.isActive());
   delay(20);
 }
 
 void menu(String data)
 {
-  Serial.println("mensagem recebida");
   JsonDocument json;
   deserializeJson(json, data);
-  int opcao = json["opcao"];
+
+  int opcao = json["Opcao"];
   float valor;
+  
   switch (opcao)
   {
   case 1:
-    valor = json["valor"];
+    valor = json["Valor"];
     balanca.setScale(valor);
-    Serial.println("calibdrado!!");
     break;
   case 2:
-    Serial.println("tara realizado!!");
     balanca.tara();
+    break;
+  case 3:
+    // bluetooth.sendMsg("b");
+    Serial.println("Ignicao acionada!!");
     break;
   default:
     break;
