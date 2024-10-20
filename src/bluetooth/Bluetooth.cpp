@@ -1,5 +1,4 @@
 #include "Bluetooth.hpp"
-#include <Arduino.h>
 
 Bluetooth::Bluetooth() : tempo(0), connected(false) {}
 
@@ -29,6 +28,11 @@ void Bluetooth::sendData(float peso, bool ativo) {
   Serial.println(jsonString);
 }
 
+void Bluetooth::sendMsg(String msg)
+{
+  SerialBT.println(msg);
+}
+
 void Bluetooth::checkConnection() {
   bool clienteConectado = hasClient();
   if (clienteConectado != connected) {
@@ -42,4 +46,9 @@ void Bluetooth::checkConnection() {
 
 bool Bluetooth::isConnected() {
   return connected;
+}
+
+bool Bluetooth::connect(const char* name)
+{
+  SerialBT.connect(name);
 }

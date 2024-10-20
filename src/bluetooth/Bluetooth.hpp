@@ -16,8 +16,10 @@ class Bluetooth{
     bool hasClient();
     void resetTime();
     void sendData(float peso, bool ativo);
+    void sendMsg(String msg);
     void checkConnection();
     bool isConnected();
+    bool connect(const char* name);
 };
 
 #endif // BLUETOOTH_HPP
