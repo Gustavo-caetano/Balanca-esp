@@ -20,6 +20,7 @@ class Socket{
     void checkConnection();
     bool isConnected();
     bool connectSK();
+    void onMenssage(void (*funcao)(String opcao));
 };
 
 #endif // BLUETOOTH_HPP

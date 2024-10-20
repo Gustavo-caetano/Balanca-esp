@@ -32,7 +32,7 @@ void Socket::sendData(float peso, bool ativo)
 
         if (webSocket.send(output))
         {
-            Serial.println("Dados enviados: " + output);
+            // Serial.println("Dados enviados: " + output);
         }
         else
         {
@@ -89,4 +89,12 @@ bool Socket::connectSK()
     resetTime();
     Serial.println("Conectado ao WebSocket!");
     return true;
+}
+
+void Socket::onMenssage(void (*funcao)(String opcao))
+{
+    webSocket.onMessage([funcao](websockets::WebsocketsMessage mensage){
+        Serial.println("mensagem recebida poha");
+        funcao(mensage.data());
+    });
 }

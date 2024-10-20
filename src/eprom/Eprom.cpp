@@ -19,7 +19,9 @@ void Eprom::addWiFi(const String& ssid, const String& password) {
 std::vector<String> Eprom::readWiFiList() {
     std::vector<String> wifiList;
     for (int i = 0; i < maxWiFiCount; ++i) {
-        if (EEPROM.read(getWiFiStartAddress(i)) == 1) {
+        int address = getWiFiStartAddress(i);
+        Serial.println("Endereço ====" + address);
+        if (EEPROM.read(address) == 1) {
             String ssid, password;
             for (int j = 0; j < ssidMaxLength; ++j) {
                 char c = EEPROM.read(getWiFiStartAddress(i) + 1 + j);
@@ -41,27 +43,19 @@ void Eprom::clearEEPROM() {
     for (int i = 0; i < maxWiFiCount; ++i) {
         EEPROM.write(getWiFiStartAddress(i), 0);
     }
+    EEPROM.commit();
 }
 
 int Eprom::getWiFiStartAddress(int index) {
-    return index * (1 + ssidMaxLength + passwordMaxLength);
+    if (index >= 0 && index < maxWiFiCount) {
+        return index * (1 + ssidMaxLength + passwordMaxLength);
+    }
+    return 0;
 }
 
 void Eprom::removeWiFi(int index) {
-    for (int i = 0; i < maxWiFiCount; ++i) {
-        if (EEPROM.read(getWiFiStartAddress(i)) == 1) {
-            String storedSSID;
-            for (int j = 0; j < ssidMaxLength; ++j) {
-                char c = EEPROM.read(getWiFiStartAddress(i) + 1 + j);
-                if (c == 0) break;
-                storedSSID += c;
-            }
-            
-            if (i == index - 1) {
-                EEPROM.write(getWiFiStartAddress(i), 0);
-                EEPROM.commit();
-                break;
-            }
-        }
+    if (index >= 0 && index < maxWiFiCount) {
+        EEPROM.write(getWiFiStartAddress(index), 0);
+        EEPROM.commit();
     }
 }
