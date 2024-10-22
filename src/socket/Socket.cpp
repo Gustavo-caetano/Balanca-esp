@@ -32,7 +32,7 @@ void Socket::sendData(float peso, bool ativo)
 
         if (webSocket.send(output))
         {
-            // Serial.println("Dados enviados: " + output);
+            Serial.println("Dados enviados: " + output);
         }
         else
         {
