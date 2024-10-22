@@ -3,8 +3,8 @@
 Bluetooth::Bluetooth() : tempo(0), connected(false) {}
 
 void Bluetooth::iniciar(const char* name) {
-  SerialBT.begin(name);
-  Serial.println("Bluetooth iniciado, aguardando conexão...");
+  SerialBT.begin(name, true );
+  Serial.println("Bluetooth iniciado");
 }
 
 bool Bluetooth::hasClient() {
@@ -30,7 +30,14 @@ void Bluetooth::sendData(float peso, bool ativo) {
 
 void Bluetooth::sendMsg(String msg)
 {
-  SerialBT.println(msg);
+  if(SerialBT.connected())
+  {
+    SerialBT.println(msg);
+    disconnect();
+  }
+  else {
+    Serial.println("nao esta conectado");
+  }
 }
 
 void Bluetooth::checkConnection() {
@@ -50,5 +57,40 @@ bool Bluetooth::isConnected() {
 
 bool Bluetooth::connect(const char* name)
 {
-  SerialBT.connect(name);
+    Serial.println("Tentando conectar ao dispositivo Bluetooth...");
+    
+    if (name == nullptr || strlen(name) == 0) {
+        Serial.println("Erro: Nome do dispositivo inválido.");
+        return false;
+    }
+    
+    try {
+        if (SerialBT.connect(name)) {
+            Serial.println("Conectado com sucesso!");
+            return true;
+        } else {
+            Serial.println("Erro: Não foi possível conectar ao dispositivo.");
+            return false;
+        }
+    } catch (const std::exception& e) {
+        Serial.print("Erro: Ocorreu uma exceção durante a tentativa de conexão: ");
+        Serial.println(e.what());
+        return false;
+    } catch (...) {
+        Serial.println("Erro: Ocorreu uma exceção inesperada durante a tentativa de conexão.");
+        return false;
+    }
 }
+
+bool Bluetooth::disconnect()
+{
+  return SerialBT.disconnect();
+}
+
+void Bluetooth::descarga()
+{
+  while (SerialBT.available()) {
+      Serial.println(SerialBT.read());
+    }
+}
+

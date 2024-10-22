@@ -18,14 +18,19 @@ void setup()
   Serial.println("Inicializando...");
   balanca.iniciar();
 
+  // wifi.init(
+  //     "PROJETO1",
+  //     "umdoistres");
+
   wifi.init(
       "LUCAS",
       "Lucas65780213");
 
-  // bluetooth.iniciar("MASTER");
-  // bluetooth.connect("FOGO_BT");
+  bluetooth.iniciar("MASTER");
 
-  socket.iniciar("ws://192.168.0.114:15000");
+  socket.iniciar(
+      "ws://192.168.0.114:15000");
+
   socket.onMenssage(menu);
 }
 
@@ -48,7 +53,7 @@ void menu(String data)
 
   int opcao = json["Opcao"];
   float valor;
-  
+
   switch (opcao)
   {
   case 1:
@@ -59,7 +64,8 @@ void menu(String data)
     balanca.tara();
     break;
   case 3:
-    // bluetooth.sendMsg("b");
+    bluetooth.connect("FOGO_BT");
+    bluetooth.sendMsg("b");
     Serial.println("Ignicao acionada!!");
     break;
   default:

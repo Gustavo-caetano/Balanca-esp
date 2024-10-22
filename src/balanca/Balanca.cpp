@@ -35,6 +35,6 @@ void Balanca::tara()
 
 void Balanca::setScale(float calibration)
 {
-
   calibration_factor += calibration;
+  Serial.println("Calibrado: " + String(calibration_factor));
 };

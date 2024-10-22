@@ -20,6 +20,8 @@ class Bluetooth{
     void checkConnection();
     bool isConnected();
     bool connect(const char* name);
+    bool disconnect();
+    void descarga();
 };
 
 #endif // BLUETOOTH_HPP
