@@ -1,9 +1,10 @@
 #include "Bluetooth.hpp"
 
-Bluetooth::Bluetooth() : tempo(0), connected(false) {}
+Bluetooth::Bluetooth(void (*menu)(String opcao),void (*printmenu)(String opcao)) 
+  : tempo(0), connected(false), funcao(menu), printMenu(printmenu) {}
 
-void Bluetooth::iniciar(const char* name) {
-  SerialBT.begin(name, true );
+void Bluetooth::iniciar(const char* name, const bool isMaster = false) {
+  SerialBT.begin(name, isMaster );
   Serial.println("Bluetooth iniciado");
 }
 
@@ -94,3 +95,33 @@ void Bluetooth::descarga()
     }
 }
 
+void Bluetooth::onMessage(void *pvParameters)
+{
+  Bluetooth *self = static_cast<Bluetooth *>(pvParameters);
+
+  while (true)
+  {
+    if(self->SerialBT.available())
+    {
+      String dado = String(self->SerialBT.read());
+      
+      self->funcao(dado);
+    }
+
+    vTaskDelay(10 / portTICK_PERIOD_MS); 
+  }
+  
+}
+
+void Bluetooth::onMessageThread()
+{
+  xTaskCreatePinnedToCore(
+    Bluetooth::onMessage,
+    "bluetoothMessage",
+    1024,
+    this,
+    1,
+    NULL,
+    1   
+  );
+}
