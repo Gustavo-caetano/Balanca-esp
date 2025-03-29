@@ -49,19 +49,26 @@ std::vector<String> Eeprom::getWifi() {
     }
 }
 
-void Eeprom::setWifi(int index, String newWifi) {
-    String wifiData = preferences.getString("wifi", "");
-    std::vector<String> wifis = StringUtils::split(wifiData);
-    if (index >= 0 && index < wifis.size()) {
-        wifis[index] = newWifi;
-        preferences.putString("wifi", StringUtils::join(wifis));
+bool Eeprom::setWifi(int index, String newWifi) {
+    try {
+        String wifiData = preferences.getString("wifi", "");
+        std::vector<String> wifis = StringUtils::split(wifiData);
+        if (index >= 0 && index < wifis.size()) {
+            wifis[index] = newWifi;
+            preferences.putString("wifi", StringUtils::join(wifis));
+            return true;
+        }
+        else if (wifis.size() == index && index < 3) {
+            wifis.push_back(newWifi);
+            preferences.putString("wifi", StringUtils::join(wifis));
+            return true;
+        }
+    } catch (...) {
+        Serial.println("Erro ao definir WiFi");
     }
-    else if(wifis.size() == index && index < 3)
-    {
-        wifis.push_back(newWifi);
-        preferences.putString("wifi", StringUtils::join(wifis));
-    }
+    return false;
 }
+
 
 String Eeprom::getWebsocketServer() {
     int indexSocketPadrao = this->getIndexPadrao();
@@ -77,20 +84,25 @@ String Eeprom::getWebsocketServer() {
     }
 }
 
-void Eeprom::setWebsockerServer(int index, String newWebsocket) {
-    String socketData = preferences.getString("socket", "");
-    std::vector<String> sockets = StringUtils::split(socketData);
-    if (index >= 0 && index < sockets.size()) {
-        sockets[index] = newWebsocket;
-        preferences.putString("socket", StringUtils::join(sockets));
+bool Eeprom::setWebsockerServer(int index, String newWebsocket) {
+    try {
+        String socketData = preferences.getString("socket", "");
+        std::vector<String> sockets = StringUtils::split(socketData);
+        if (index >= 0 && index < sockets.size()) {
+            sockets[index] = newWebsocket;
+            preferences.putString("socket", StringUtils::join(sockets));
+            return true;
+        }
+        else if (sockets.size() == index && index < 3) {
+            sockets.push_back(newWebsocket);
+            preferences.putString("socket", StringUtils::join(sockets));
+            return true;
+        }
+        else {
+            Serial.println("Index invalido");
+        }
+    } catch (...) {
+        Serial.println("Erro ao definir WebSocket Server");
     }
-    else if(sockets.size() == index && index < 3)
-    {
-        sockets.push_back(newWebsocket);
-        preferences.putString("socket", StringUtils::join(sockets));
-    }
-    else
-    {
-        Serial.println("Index invalido");
-    }
+    return false;
 }

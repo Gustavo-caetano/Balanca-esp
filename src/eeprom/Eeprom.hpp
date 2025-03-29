@@ -18,10 +18,10 @@ public:
     String getWebsocketServers();
     
     std::vector <String> getWifi();
-    void setWifi(int index , String newWifi);
+    bool setWifi(int index , String newWifi);
 
     String getWebsocketServer();
-    void setWebsockerServer(int index, String newWebsocket);
+    bool setWebsockerServer(int index, String newWebsocket);
 };
 
 #endif // EEPROM_HPP

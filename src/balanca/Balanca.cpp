@@ -1,8 +1,8 @@
 #include "Balanca.hpp"
 #include <Arduino.h>
 
-#define pinDT 26
-#define pinSCK 27
+const short pinDT = 26;
+const short pinSCK = 27;
 
 Balanca::Balanca() : active(false), calibration_factor(277560.00) {}
 

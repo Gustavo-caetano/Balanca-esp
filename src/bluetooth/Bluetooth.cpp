@@ -38,7 +38,6 @@ void Bluetooth::sendMsg(String msg)
   if(SerialBT.connected())
   {
     SerialBT.println(msg);
-    // disconnect();
   }
   else {
     Serial.println("nao esta conectado");
