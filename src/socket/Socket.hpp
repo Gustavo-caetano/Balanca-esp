@@ -9,18 +9,18 @@ class Socket{
     websockets::WebsocketsClient webSocket;
     unsigned long tempo;
     bool connected;
-    String host;
+    std::string host;
 
   public:
     Socket();
-    void iniciar(String  server);
+    void iniciar(std::string  server);
     bool hasClient();
     void resetTime();
     void sendData(float peso, bool ativo);
     void checkConnection();
     bool isConnected();
     bool connectSK();
-    void onMenssage(void (*funcao)(String opcao));
+    void onMenssage(void (*funcao)(std::string opcao));
     void poll();
 };
 

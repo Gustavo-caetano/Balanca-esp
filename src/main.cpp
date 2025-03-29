@@ -10,7 +10,7 @@
 
 // Definições e Constantes
 const int PINO_IGNICAO = 2;
-const String NAMESPACE_EEPROM = "configs";
+const std::string NAMESPACE_EEPROM = "configs";
 
 // Objetos Globais
 Socket socket;
@@ -20,12 +20,12 @@ Bluetooth bluetooth;
 Eeprom eeprom;
 
 // Declaração de Funções
-void menu(String opcao);
-void menuBluetooth(String opcao);
+void menu(std::string opcao);
+void menuBluetooth(std::string opcao);
 void ignicao(void *par);
 void printMenu();
-String inputWifiBluetooth();
-String inputWebsocketBluetooth();
+std::string inputWifiBluetooth();
+std::string inputWebsocketBluetooth();
 bool configurarWifi();
 bool configurarWebsocket();
 void handleIgnicao();
@@ -67,7 +67,7 @@ void handleIgnicao() {
     xTaskCreate(ignicao, "ignicao", 1000, NULL, 1, NULL);
 }
 
-void menu(String data) {
+void menu(std::string data) {
     JsonDocument json;
     deserializeJson(json, data);
 
@@ -91,10 +91,10 @@ void menu(String data) {
     }
 }
 
-void menuBluetooth(String opcao) {
+void menuBluetooth(std::string opcao) {
     int indexSelecionado;
 
-    switch (opcao.toInt()) {
+    switch (std::stoi(opcao)) {
         case 0:
             ESP.restart();
             break;
@@ -116,8 +116,8 @@ void menuBluetooth(String opcao) {
             }
             break;
         case 4:
-            bluetooth.sendMsg("Index padrao: " + String(eeprom.getIndexPadrao()));
-            indexSelecionado = bluetooth.receiveString("Informe o index desejado").toInt();
+            bluetooth.sendMsg("Index padrao: " + eeprom.getIndexPadrao());
+            indexSelecionado = std::stoi(bluetooth.receiveString("Informe o index desejado"));
             eeprom.setIndexPadrao(indexSelecionado);
             break;
         case 9:
@@ -131,13 +131,13 @@ void menuBluetooth(String opcao) {
 
 bool configurarWifi() {
     bluetooth.sendMsg(eeprom.getWifis());
-    int indexSelecionado = bluetooth.receiveString("Informe o index desejado").toInt();
+    int indexSelecionado = std::stoi(bluetooth.receiveString("Informe o index desejado"));
     return eeprom.setWifi(indexSelecionado, inputWifiBluetooth());
 }
 
 bool configurarWebsocket() {
     bluetooth.sendMsg(eeprom.getWebsocketServers());
-    int indexSelecionado = bluetooth.receiveString("Informe o index desejado").toInt();
+    int indexSelecionado = std::stoi(bluetooth.receiveString("Informe o index desejado"));
     return eeprom.setWebsockerServer(indexSelecionado, inputWebsocketBluetooth());
 }
 
@@ -150,13 +150,13 @@ void printMenu() {
     bluetooth.sendMsg("4 - Informar a config padrao");
 }
 
-String inputWifiBluetooth() {
-    std::vector<String> wifi;
+std::string inputWifiBluetooth() {
+    std::vector<std::string> wifi;
     wifi.push_back(bluetooth.receiveString("Informe o SSID do WiFi"));
     wifi.push_back(bluetooth.receiveString("Informe a senha do WiFi"));
     return StringUtils::join(wifi, '/');
 }
 
-String inputWebsocketBluetooth() {
+std::string inputWebsocketBluetooth() {
     return bluetooth.receiveString("Informe a URL do WebSocket");
 }

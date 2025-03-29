@@ -2,7 +2,7 @@
 #include <WiFi.h>
 #include <vector>
 
-void Wifi::init(std::vector<String> conexao)
+void Wifi::init(std::vector<std::string> conexao)
 {
     this->ssid = conexao[0];
     this->passwd = conexao[1];
@@ -13,7 +13,7 @@ void Wifi::init(std::vector<String> conexao)
 bool Wifi::connect()
 {
     Serial.println("Tentando conectar ao WiFi...");
-    WiFi.begin(ssid, passwd);
+    WiFi.begin(ssid.c_str(), passwd.c_str());
 
     unsigned long startAttemptTime = millis();
     while (WiFi.status() != WL_CONNECTED && millis() - startAttemptTime < 10000)
@@ -25,7 +25,7 @@ bool Wifi::connect()
     if (WiFi.status() != WL_CONNECTED)
     {
         Serial.println("\nFalha ao conectar ao WiFi!");
-        Serial.println("Ssid: " + ssid +'\n' + "Senha: "+ passwd);
+        Serial.println("Ssid: " + String(ssid.c_str()) +'\n' + "Senha: "+ String(passwd.c_str()));
         return false;
     }
 

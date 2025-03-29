@@ -9,19 +9,19 @@ class Eeprom
 private:
     Preferences preferences;
 public:
-    void iniciar(String nameSpace);
+    void iniciar(std::string nameSpace);
 
     int getIndexPadrao();
     void setIndexPadrao(int index);
 
-    String getWifis();
-    String getWebsocketServers();
+    std::string getWifis();
+    std::string getWebsocketServers();
     
-    std::vector <String> getWifi();
-    bool setWifi(int index , String newWifi);
+    std::vector <std::string> getWifi();
+    bool setWifi(int index , std::string newWifi);
 
-    String getWebsocketServer();
-    bool setWebsockerServer(int index, String newWebsocket);
+    std::string getWebsocketServer();
+    bool setWebsockerServer(int index, std::string newWebsocket);
 };
 
 #endif // EEPROM_HPP

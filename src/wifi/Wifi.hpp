@@ -6,12 +6,12 @@
 
 class Wifi {
   private:
-    String ssid;
-    String passwd;
+    std::string ssid;
+    std::string passwd;
 
     bool connect();
   public:
-    void init(std::vector<String> conexao);
+    void init(std::vector<std::string> conexao);
 };
 
 #endif // WIFI_HPP 

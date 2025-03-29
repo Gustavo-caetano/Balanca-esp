@@ -1,9 +1,11 @@
 #include "Bluetooth.hpp"
 
+#include "../utils/stringutils/StringUtils.hpp"
+
 Bluetooth::Bluetooth() 
   : tempo(0), connected(false) {}
 
-void Bluetooth::iniciar(const char* name, void (*menu)(String opcao),void (*printmenu)(), const bool isMaster) {
+void Bluetooth::iniciar(const char* name, void (*menu)(std::string opcao),void (*printmenu)(), const bool isMaster) {
 
   funcao = menu;
   printMenu = printmenu;
@@ -21,45 +23,46 @@ void Bluetooth::resetTime() {
 }
 
 void Bluetooth::sendData(float peso, bool ativo) {
-  StaticJsonDocument<200> data;
-  String jsonString;
+  
+  JsonDocument data;
+  data.to<JsonObject>(); 
+  std::string jsonString;
 
   data["Tempo"] = millis() - tempo;
   data["Peso"] = peso;
   data["Ativo"] = ativo;
 
   serializeJson(data, jsonString);
-  SerialBT.println(jsonString);
-  Serial.println(jsonString);
+  SerialBT.println(jsonString.c_str());
+  Serial.println(jsonString.c_str());
 }
 
-void Bluetooth::sendMsg(String msg)
+void Bluetooth::sendMsg(std::string msg)
 {
   if(SerialBT.connected())
   {
-    SerialBT.println(msg);
+    SerialBT.println(msg.c_str());
   }
   else {
     Serial.println("nao esta conectado");
   }
 }
 
-String Bluetooth::receiveString(String msg)
+std::string Bluetooth::receiveString(std::string msg)
 {
     if (SerialBT.connected())
     {
-        SerialBT.println(msg);
+        SerialBT.println(msg.c_str());
 
-        String dado;
+        std::string dado;
         unsigned long tempoInicial = millis();
 
         while (millis() - tempoInicial < 50000)  
         {
             if (SerialBT.available())
             {
-                dado = SerialBT.readStringUntil('\n');  
-                dado.trim();
-                return dado;
+                dado = SerialBT.readStringUntil('\n').c_str();  
+                return StringUtils::trim(dado);
             }
             vTaskDelay(10 / portTICK_PERIOD_MS);
         }
@@ -137,8 +140,8 @@ void Bluetooth::onMessage(void *pvParameters)
   {
     if(self->SerialBT.available())
     {
-      String dado = self->SerialBT.readStringUntil('\n');  
-      Serial.println("comando executado: "+ dado);
+      std::string dado = self->SerialBT.readStringUntil('\n').c_str();  
+      Serial.println("comando executado: " + String(dado.c_str()));
       self->funcao(dado);
     }
 

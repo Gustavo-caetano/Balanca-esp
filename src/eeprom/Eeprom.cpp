@@ -1,7 +1,7 @@
 #include "Eeprom.hpp"
-#include "../utils/stringutils/StringUtils.hpp"
+#include "../utils/Stringutils/StringUtils.hpp"
 
-void Eeprom::iniciar(String nameSpace) {
+void Eeprom::iniciar(std::string nameSpace) {
     preferences.begin(nameSpace.c_str(), false);
 }
 
@@ -14,32 +14,32 @@ void Eeprom::setIndexPadrao(int index) {
     preferences.putInt("index", index);
 }
 
-String Eeprom::getWifis()
+std::string Eeprom::getWifis()
 {
-    String wifiData = preferences.getString("wifi", "");
-    std::vector<String> wifis = StringUtils::split(wifiData);
-    String wifiDataJoined = StringUtils::join(wifis, '\n');
+    std::string wifiData = preferences.getString("wifi", "").c_str();
+    std::vector<std::string> wifis = StringUtils::split(wifiData);
+    std::string wifiDataJoined = StringUtils::join(wifis, '\n');
 
     return wifiDataJoined;
 }
 
-String Eeprom::getWebsocketServers()
+std::string Eeprom::getWebsocketServers()
 {
-    String socketData = preferences.getString("socket", "");
-    std::vector<String> sockets = StringUtils::split(socketData);
-    String wifiDataJoined = StringUtils::join(sockets, '\n');
+    std::string socketData = preferences.getString("socket", "").c_str();
+    std::vector<std::string> sockets = StringUtils::split(socketData);
+    std::string wifiDataJoined = StringUtils::join(sockets, '\n');
 
     return wifiDataJoined;
 }
 
-std::vector<String> Eeprom::getWifi() {
+std::vector<std::string> Eeprom::getWifi() {
     int indexWifiPadrao = this->getIndexPadrao();
-    String wifiData = preferences.getString("wifi", "");
-    if (wifiData.isEmpty()) {
+    std::string wifiData = preferences.getString("wifi", "").c_str();
+    if (wifiData.length() == 0) {
         Serial.println("vazio o wifi");
         return {"", ""};
     }
-    std::vector<String> wifis = StringUtils::split(wifiData);
+    std::vector<std::string> wifis = StringUtils::split(wifiData);
     if (indexWifiPadrao >= 0 && indexWifiPadrao < wifis.size()) {
         
         return StringUtils::split(wifis[indexWifiPadrao], '/');
@@ -49,18 +49,18 @@ std::vector<String> Eeprom::getWifi() {
     }
 }
 
-bool Eeprom::setWifi(int index, String newWifi) {
+bool Eeprom::setWifi(int index, std::string newWifi) {
     try {
-        String wifiData = preferences.getString("wifi", "");
-        std::vector<String> wifis = StringUtils::split(wifiData);
+        std::string wifiData = preferences.getString("wifi", "").c_str();
+        std::vector<std::string> wifis = StringUtils::split(wifiData);
         if (index >= 0 && index < wifis.size()) {
             wifis[index] = newWifi;
-            preferences.putString("wifi", StringUtils::join(wifis));
+            preferences.putString("wifi", StringUtils::join(wifis).c_str());
             return true;
         }
         else if (wifis.size() == index && index < 3) {
             wifis.push_back(newWifi);
-            preferences.putString("wifi", StringUtils::join(wifis));
+            preferences.putString("wifi", StringUtils::join(wifis).c_str());
             return true;
         }
     } catch (...) {
@@ -70,13 +70,13 @@ bool Eeprom::setWifi(int index, String newWifi) {
 }
 
 
-String Eeprom::getWebsocketServer() {
+std::string Eeprom::getWebsocketServer() {
     int indexSocketPadrao = this->getIndexPadrao();
-    String socketData = preferences.getString("socket", "");
-    if (socketData.isEmpty()) {
+    std::string socketData = preferences.getString("socket", "").c_str();
+    if (socketData.length() == 0) {
         return socketData;
     }
-    std::vector<String> sockets = StringUtils::split(socketData);
+    std::vector<std::string> sockets = StringUtils::split(socketData);
     if (indexSocketPadrao >= 0 && indexSocketPadrao < sockets.size()) {
         return sockets[indexSocketPadrao];
     } else {
@@ -84,18 +84,18 @@ String Eeprom::getWebsocketServer() {
     }
 }
 
-bool Eeprom::setWebsockerServer(int index, String newWebsocket) {
+bool Eeprom::setWebsockerServer(int index, std::string newWebsocket) {
     try {
-        String socketData = preferences.getString("socket", "");
-        std::vector<String> sockets = StringUtils::split(socketData);
+        std::string socketData = preferences.getString("socket", "").c_str();
+        std::vector<std::string> sockets = StringUtils::split(socketData);
         if (index >= 0 && index < sockets.size()) {
             sockets[index] = newWebsocket;
-            preferences.putString("socket", StringUtils::join(sockets));
+            preferences.putString("socket", StringUtils::join(sockets).c_str());
             return true;
         }
         else if (sockets.size() == index && index < 3) {
             sockets.push_back(newWebsocket);
-            preferences.putString("socket", StringUtils::join(sockets));
+            preferences.putString("socket", StringUtils::join(sockets).c_str());
             return true;
         }
         else {

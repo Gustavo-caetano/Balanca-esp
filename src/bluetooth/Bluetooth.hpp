@@ -9,19 +9,19 @@ class Bluetooth{
     BluetoothSerial SerialBT;
     unsigned long tempo;
     bool connected;
-    void (*funcao)(String opcao);
+    void (*funcao)(std::string opcao);
 
     void (*printMenu)();
     static void onMessage(void *pvParameters);
 
   public:
     Bluetooth();
-    void iniciar(const char* name, void (*menu)(String opcao),void (*printmenu)(), const bool isMaster = false);
+    void iniciar(const char* name, void (*menu)(std::string opcao),void (*printmenu)(), const bool isMaster = false);
     bool hasClient();
     void resetTime();
     void sendData(float peso, bool ativo);
-    void sendMsg(String msg);
-    String receiveString(String msg);
+    void sendMsg(std::string msg);
+    std::string receiveString(std::string msg);
     void checkConnection();
     bool isConnected();
     bool connect(const char* name);

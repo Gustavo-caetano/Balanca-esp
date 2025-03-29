@@ -2,7 +2,7 @@
 
 Socket::Socket() : tempo(0), connected(false) {}
 
-void Socket::iniciar(String server)
+void Socket::iniciar(std::string server)
 {
     this->host = server;
     connectSK();
@@ -27,12 +27,12 @@ void Socket::sendData(float peso, bool ativo)
         doc["Peso"] = peso;
         doc["Ativo"] = ativo;
 
-        String output;
+        std::string output;
         serializeJson(doc, output);
 
-        if (webSocket.send(output))
+        if (webSocket.send(output.c_str()))
         {
-            Serial.println("Dados enviados: " + output);
+            Serial.println("Dados enviados: " + String(output.c_str()));
         }
         else
         {
@@ -71,11 +71,11 @@ bool Socket::connectSK()
     unsigned long startConnectTime = millis();
     int attempt = 0;
 
-    while (!webSocket.connect(host) && millis() - startConnectTime < 100000)
+    while (!webSocket.connect(host.c_str()) && millis() - startConnectTime < 100000)
     {
         attempt++;
         delay(1000);
-        Serial.println("Tentativa " + String(attempt) +" de conexão ao WebSocket falhou! Tentando novamente...\nHost:"+ host);
+        Serial.println("Tentativa " + String(attempt) +" de conexão ao WebSocket falhou! Tentando novamente...\nHost:"+ String(host.c_str()));
     }
 
     if (millis() - startConnectTime > 100000)
@@ -91,10 +91,11 @@ bool Socket::connectSK()
     return true;
 }
 
-void Socket::onMenssage(void (*funcao)(String opcao))
+void Socket::onMenssage(void (*funcao)(std::string opcao))
 {
     webSocket.onMessage([funcao](websockets::WebsocketsMessage mensage){
-        funcao(mensage.data());
+        std::string s(mensage.data().begin(), mensage.data().end());
+        funcao(s);
     });
 }
 
