@@ -106,3 +106,20 @@ bool Eeprom::setWebsockerServer(int index, std::string newWebsocket) {
     }
     return false;
 }
+
+float Eeprom::getNumberCalibration()
+{
+    float numberCalibration = preferences.getFloat("calibration", 277560.00);
+
+    return numberCalibration;
+}
+
+bool Eeprom::setNumberCalibration(float numberCalibration)
+{
+    try {
+        preferences.putFloat("calibration", numberCalibration);
+        return true;
+    } catch(...) {
+        return false;
+    }
+}

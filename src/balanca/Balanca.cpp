@@ -4,18 +4,20 @@
 const short pinDT = 26;
 const short pinSCK = 27;
 
-Balanca::Balanca() : active(false), calibration_factor(277560.00) {}
+Balanca::Balanca() : active(false) {}
 
-void Balanca::iniciar()
+void Balanca::iniciar(float calibrationFactor)
 {
   scale.begin(pinDT, pinSCK);
+
+  this->calibrationFactor = calibrationFactor;
   tara();
 }
 
 float Balanca::getPeso()
 {
 
-  scale.set_scale(calibration_factor);
+  scale.set_scale(calibrationFactor);
   float peso = scale.get_units() * 1000;
   active = peso > 10;
 
@@ -35,6 +37,11 @@ void Balanca::tara()
 
 void Balanca::setScale(float calibration)
 {
-  calibration_factor += calibration;
-  Serial.println("Calibrado: " + String(calibration_factor));
+  calibrationFactor += calibration;
+  Serial.println("Calibrado: " + String(calibrationFactor));
 };
+
+float Balanca::getScale()
+{
+  return calibrationFactor;
+}

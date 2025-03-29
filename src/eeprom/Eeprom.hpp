@@ -22,6 +22,9 @@ public:
 
     std::string getWebsocketServer();
     bool setWebsockerServer(int index, std::string newWebsocket);
+
+    float getNumberCalibration();
+    bool setNumberCalibration(float numberCalibration);
 };
 
 #endif // EEPROM_HPP

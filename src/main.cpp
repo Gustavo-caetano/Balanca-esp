@@ -26,19 +26,21 @@ void ignicao(void *par);
 void printMenu();
 std::string inputWifiBluetooth();
 std::string inputWebsocketBluetooth();
+float inputCalibration();
 bool configurarWifi();
 bool configurarWebsocket();
+bool configurarCalibracao();
 void handleIgnicao();
 
 void setup() {
     pinMode(PINO_IGNICAO, OUTPUT);
     Serial.begin(115200);
     Serial.println("Inicializando...");
+    eeprom.iniciar(NAMESPACE_EEPROM);
     
-    balanca.iniciar();
+    balanca.iniciar(eeprom.getNumberCalibration());
     bluetooth.iniciar("MASTER", menuBluetooth, printMenu);
     bluetooth.onMessageThread();
-    eeprom.iniciar(NAMESPACE_EEPROM);
     
     wifi.init(eeprom.getWifi());
     socket.iniciar(eeprom.getWebsocketServer());
@@ -120,6 +122,13 @@ void menuBluetooth(std::string opcao) {
             indexSelecionado = std::stoi(bluetooth.receiveString("Informe o index desejado"));
             eeprom.setIndexPadrao(indexSelecionado);
             break;
+        case 5:
+            if(configurarCalibracao())
+            {
+                bluetooth.sendMsg("Calibracao configurada com sucesso");
+            }else {
+                bluetooth.sendMsg("Erro ao configurar a calibracao");
+            }
         case 9:
             printMenu();
             break;
@@ -141,6 +150,15 @@ bool configurarWebsocket() {
     return eeprom.setWebsockerServer(indexSelecionado, inputWebsocketBluetooth());
 }
 
+bool configurarCalibracao()
+{
+    bluetooth.sendMsg(std::to_string(eeprom.getNumberCalibration()));
+    float calibration = inputCalibration();
+
+    balanca.setScale(calibration);
+    return eeprom.setNumberCalibration(balanca.getScale());
+}
+
 void printMenu() {
     bluetooth.sendMsg("Menu de opcoes do bluetooth");
     bluetooth.sendMsg("0 - Reiniciar o ESP");
@@ -148,6 +166,7 @@ void printMenu() {
     bluetooth.sendMsg("2 - Configurar WiFi");
     bluetooth.sendMsg("3 - Configurar WebSocket");
     bluetooth.sendMsg("4 - Informar a config padrao");
+    bluetooth.sendMsg("5 - Configurar calibracao");
 }
 
 std::string inputWifiBluetooth() {
@@ -159,4 +178,9 @@ std::string inputWifiBluetooth() {
 
 std::string inputWebsocketBluetooth() {
     return bluetooth.receiveString("Informe a URL do WebSocket");
+}
+
+float inputCalibration()
+{
+    return std::stof(bluetooth.receiveString("Incremente ou decremente um valor"));
 }

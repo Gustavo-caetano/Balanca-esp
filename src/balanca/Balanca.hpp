@@ -7,15 +7,16 @@ class Balanca {
   private:
     HX711 scale;
     bool active;
-    float calibration_factor;
+    float calibrationFactor;
 
   public:
     Balanca();
-    void iniciar();
+    void iniciar(float calibrationFactor);
     float getPeso();
     bool isActive();
     void tara();
     void setScale(float calibration);
+    float getScale();
 };
 
 #endif // BALANCA_HPP
