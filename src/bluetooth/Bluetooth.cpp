@@ -1,9 +1,13 @@
 #include "Bluetooth.hpp"
 
-Bluetooth::Bluetooth(void (*menu)(String opcao),void (*printmenu)(String opcao)) 
-  : tempo(0), connected(false), funcao(menu), printMenu(printmenu) {}
+Bluetooth::Bluetooth() 
+  : tempo(0), connected(false) {}
 
-void Bluetooth::iniciar(const char* name, const bool isMaster = false) {
+void Bluetooth::iniciar(const char* name, void (*menu)(String opcao),void (*printmenu)(), const bool isMaster) {
+
+  funcao = menu;
+  printMenu = printmenu;
+
   SerialBT.begin(name, isMaster );
   Serial.println("Bluetooth iniciado");
 }
@@ -34,12 +38,43 @@ void Bluetooth::sendMsg(String msg)
   if(SerialBT.connected())
   {
     SerialBT.println(msg);
-    disconnect();
+    // disconnect();
   }
   else {
     Serial.println("nao esta conectado");
   }
 }
+
+String Bluetooth::receiveString(String msg)
+{
+    if (SerialBT.connected())
+    {
+        SerialBT.println(msg);
+
+        String dado;
+        unsigned long tempoInicial = millis();
+
+        while (millis() - tempoInicial < 50000)  
+        {
+            if (SerialBT.available())
+            {
+                dado = SerialBT.readStringUntil('\n');  
+                dado.trim();
+                return dado;
+            }
+            vTaskDelay(10 / portTICK_PERIOD_MS);
+        }
+
+        Serial.println("Tempo esgotado esperando resposta.");
+        return "";
+    }
+    else 
+    {
+        Serial.println("Nao esta conectado");
+        return "";
+    }
+}
+
 
 void Bluetooth::checkConnection() {
   bool clienteConectado = hasClient();
@@ -103,8 +138,8 @@ void Bluetooth::onMessage(void *pvParameters)
   {
     if(self->SerialBT.available())
     {
-      String dado = String(self->SerialBT.read());
-      
+      String dado = self->SerialBT.readStringUntil('\n');  
+      Serial.println("comando executado: "+ dado);
       self->funcao(dado);
     }
 
@@ -118,7 +153,7 @@ void Bluetooth::onMessageThread()
   xTaskCreatePinnedToCore(
     Bluetooth::onMessage,
     "bluetoothMessage",
-    1024,
+    4096,
     this,
     1,
     NULL,

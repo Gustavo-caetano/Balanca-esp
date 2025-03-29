@@ -2,10 +2,10 @@
 #include <WiFi.h>
 #include <vector>
 
-void Wifi::init(String ssid, String passwd)
+void Wifi::init(std::vector<String> conexao)
 {
-    this->ssid = ssid;
-    this->passwd = passwd;
+    this->ssid = conexao[0];
+    this->passwd = conexao[1];
 
     connect();
 }
@@ -25,6 +25,7 @@ bool Wifi::connect()
     if (WiFi.status() != WL_CONNECTED)
     {
         Serial.println("\nFalha ao conectar ao WiFi!");
+        Serial.println("Ssid: " + ssid +'\n' + "Senha: "+ passwd);
         return false;
     }
 

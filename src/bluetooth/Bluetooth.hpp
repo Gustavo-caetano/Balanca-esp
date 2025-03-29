@@ -11,16 +11,17 @@ class Bluetooth{
     bool connected;
     void (*funcao)(String opcao);
 
-    void (*printMenu)(String opcao);
+    void (*printMenu)();
     static void onMessage(void *pvParameters);
 
   public:
-    Bluetooth(void (*menu)(String opcao), void (*printmenu)(String opcao));
-    void iniciar(const char* name, const bool isMaster = false);
+    Bluetooth();
+    void iniciar(const char* name, void (*menu)(String opcao),void (*printmenu)(), const bool isMaster = false);
     bool hasClient();
     void resetTime();
     void sendData(float peso, bool ativo);
     void sendMsg(String msg);
+    String receiveString(String msg);
     void checkConnection();
     bool isConnected();
     bool connect(const char* name);

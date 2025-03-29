@@ -75,7 +75,7 @@ bool Socket::connectSK()
     {
         attempt++;
         delay(1000);
-        Serial.printf("Tentativa %d de conexão ao WebSocket falhou! Tentando novamente...\nHost: %s\n", attempt, host);
+        Serial.println("Tentativa " + String(attempt) +" de conexão ao WebSocket falhou! Tentando novamente...\nHost:"+ host);
     }
 
     if (millis() - startConnectTime > 100000)
