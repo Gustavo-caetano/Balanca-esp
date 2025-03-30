@@ -6,6 +6,10 @@
 		{
 			"name": "Balanca",
 			"path": "."
+		},
+		{
+			"name": "local",
+			"path": "../../../OneDrive/Documentos/PlatformIO/Projects/local"
 		}
 	],
 	"settings": {

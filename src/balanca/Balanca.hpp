@@ -17,6 +17,7 @@ class Balanca {
     void tara();
     void setScale(float calibration);
     float getScale();
+
 };
 
 #endif // BALANCA_HPP

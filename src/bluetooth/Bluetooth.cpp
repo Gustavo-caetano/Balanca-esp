@@ -155,7 +155,7 @@ void Bluetooth::onMessageThread()
   xTaskCreatePinnedToCore(
     Bluetooth::onMessage,
     "bluetoothMessage",
-    4096,
+    3000,
     this,
     1,
     NULL,

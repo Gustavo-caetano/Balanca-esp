@@ -20,28 +20,27 @@ void Socket::resetTime()
 
 void Socket::sendData(float peso, bool ativo)
 {
-    if (connected)
+    if (!connected)
     {
-        DynamicJsonDocument doc(1024);
-        doc["Tempo"] = millis() - tempo;
-        doc["Peso"] = peso;
-        doc["Ativo"] = ativo;
+        Serial.println("WebSocket não está conectado. Não foi possível enviar dados.");
+        return;
+    }
+    
+    JsonDocument doc;
+    doc["Tempo"] = millis() - tempo;
+    doc["Peso"] = peso;
+    doc["Ativo"] = ativo;
 
-        std::string output;
-        serializeJson(doc, output);
+    std::string output;
+    serializeJson(doc, output);
 
-        if (webSocket.send(output.c_str()))
-        {
-            Serial.println("Dados enviados: " + String(output.c_str()));
-        }
-        else
-        {
-            Serial.println("Falha ao enviar dados!");
-        }
+    if (webSocket.send(output.c_str()))
+    {
+        // Serial.println("Dados enviados: " + String(output.c_str()));
     }
     else
     {
-        Serial.println("WebSocket não está conectado. Não foi possível enviar dados.");
+        Serial.println("Falha ao enviar dados!");
     }
 }
 
