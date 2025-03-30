@@ -7,6 +7,7 @@
 #include "wifi/Wifi.hpp"
 #include "bluetooth/Bluetooth.hpp"
 #include "eeprom/Eeprom.hpp"
+#include "monitor/Monitor.hpp"
 
 // Definições e Constantes
 const int PINO_IGNICAO = 2;
@@ -38,6 +39,8 @@ void setup() {
     Serial.println("Inicializando...");
     eeprom.iniciar(NAMESPACE_EEPROM);
     
+    Monitor::monitorTask();
+
     balanca.iniciar(eeprom.getNumberCalibration());
     bluetooth.iniciar("MASTER", menuBluetooth, printMenu);
     bluetooth.onMessageThread();
@@ -45,6 +48,7 @@ void setup() {
     wifi.init(eeprom.getWifi());
     socket.iniciar(eeprom.getWebsocketServer());
     socket.onMenssage(menu);
+
 }
 
 void loop() {
@@ -66,7 +70,7 @@ void ignicao(void *par) {
 }
 
 void handleIgnicao() {
-    xTaskCreate(ignicao, "ignicao", 1000, NULL, 1, NULL);
+    xTaskCreate(ignicao, "ignicao", 200, NULL, 1, NULL);
 }
 
 void menu(std::string data) {
@@ -80,6 +84,7 @@ void menu(std::string data) {
         case 1:
             valor = json["Valor"];
             balanca.setScale(valor);
+            eeprom.setNumberCalibration(balanca.getScale());
             break;
         case 2:
             balanca.tara();
