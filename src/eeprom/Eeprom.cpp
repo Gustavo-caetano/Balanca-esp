@@ -134,7 +134,7 @@ bool Eeprom::getstandalone()
 bool Eeprom::setstandalone(bool standalone)
 {
     try {
-        preferences.putFloat("standalone", standalone);
+        preferences.putBool("standalone", standalone);
         return true;
     } catch(...) {
         return false;

@@ -34,6 +34,7 @@ float inputCalibration();
 bool configurarWifi();
 bool configurarWebsocket();
 bool configurarCalibracao();
+bool configurarStandalone();
 void handleIgnicao();
 bool stringToBool(std::string str);
 void btCallback(esp_spp_cb_event_t event, esp_spp_cb_param_t *param);
@@ -147,6 +148,14 @@ void menuBluetooth(std::string opcao) {
             }else {
                 bluetooth.sendMsg("Erro ao configurar a calibracao");
             }
+        case 6:
+            if(configurarStandalone())
+            {
+                bluetooth.sendMsg("Calibracao standalone com sucesso");
+                ESP.restart();
+            }else {
+                bluetooth.sendMsg("Erro ao standalone a calibracao");
+            }
         case 9:
             printMenu();
             break;
@@ -179,22 +188,26 @@ bool configurarCalibracao()
 
 bool configurarStandalone()
 {
-    std::string msg = "para configurar o modo standalone preencha 0(false) ou 1(true) ou escreve diretamente true ou false\n\n standalone = " + std::to_string(eeprom.getstandalone());
+    std::string msg = "para configurar o modo standalone preencha: \n 0(false) ou 1(true)\nOu escreva diretamente true ou false\n\n standalone = " + std::to_string(eeprom.getstandalone());
 
     bluetooth.sendMsg(msg);
     bool standalone = stringToBool(bluetooth.receiveString("\nInforme o valor"));
+    Serial.println(standalone);
 
     return eeprom.setstandalone(standalone);
 }
 
 void printMenu() {
-    bluetooth.sendMsg("Menu de opcoes do bluetooth");
-    bluetooth.sendMsg("0 - Reiniciar o ESP");
-    bluetooth.sendMsg("1 - Acionar ignicao manual");
-    bluetooth.sendMsg("2 - Configurar WiFi");
-    bluetooth.sendMsg("3 - Configurar WebSocket");
-    bluetooth.sendMsg("4 - Informar a config padrao");
-    bluetooth.sendMsg("5 - Configurar calibracao");
+    bluetooth.sendMsg(
+    "Menu de opcoes do bluetooth\n"
+    "0 - Reiniciar o ESP\n"
+    "1 - Acionar ignicao manual\n"
+    "2 - Configurar WiFi\n"
+    "3 - Configurar WebSocket\n"
+    "4 - Informar a config padrao\n"
+    "5 - Configurar calibracao\n"
+    "6 - Configurar modo standalone"
+    );
 }
 
 std::string inputWifiBluetooth() {
