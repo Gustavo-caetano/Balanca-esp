@@ -140,7 +140,8 @@ void Bluetooth::onMessage(void *pvParameters)
   {
     if(self->SerialBT.available())
     {
-      std::string dado = self->SerialBT.readStringUntil('\n').c_str();  
+      String raw = self->SerialBT.readStringUntil('\n');
+      std::string dado = raw.c_str();
       Serial.println("comando executado: " + String(dado.c_str()));
       self->funcao(dado);
     }

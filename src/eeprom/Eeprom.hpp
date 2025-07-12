@@ -25,6 +25,9 @@ public:
 
     float getNumberCalibration();
     bool setNumberCalibration(float numberCalibration);
+
+    bool getstandalone();
+    bool setstandalone(bool standalone);
 };
 
 #endif // EEPROM_HPP

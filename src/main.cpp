@@ -13,6 +13,9 @@
 const int PINO_IGNICAO = 2;
 const std::string NAMESPACE_EEPROM = "configs";
 
+//variaveis usadas
+bool standalone;
+
 // Objetos Globais
 Socket socket;
 Balanca balanca;
@@ -32,6 +35,7 @@ bool configurarWifi();
 bool configurarWebsocket();
 bool configurarCalibracao();
 void handleIgnicao();
+bool stringToBool(std::string str);
 
 void setup() {
     pinMode(PINO_IGNICAO, OUTPUT);
@@ -39,19 +43,26 @@ void setup() {
     Serial.println("Inicializando...");
     eeprom.iniciar(NAMESPACE_EEPROM);
     
-    Monitor::monitorTask();
+    // Monitor::monitorTask();
+
+    standalone = eeprom.getstandalone();
 
     balanca.iniciar(eeprom.getNumberCalibration());
     bluetooth.iniciar("MASTER", menuBluetooth, printMenu);
     bluetooth.onMessageThread();
     
-    wifi.init(eeprom.getWifi());
-    socket.iniciar(eeprom.getWebsocketServer());
+    wifi.init(eeprom.getWifi(), standalone);
+    socket.iniciar(eeprom.getWebsocketServer(), standalone);
     socket.onMenssage(menu);
-
+    
 }
 
 void loop() {
+    if(standalone) {
+        delay(20);
+        return;
+    }
+
     socket.checkConnection();
     if (socket.isConnected()) {
         socket.poll();
@@ -67,10 +78,11 @@ void ignicao(void *par) {
     Serial.println("Ignicao acionada");
     vTaskDelay(pdMS_TO_TICKS(5000));
     digitalWrite(PINO_IGNICAO, LOW);
+    vTaskDelete(NULL);
 }
 
 void handleIgnicao() {
-    xTaskCreate(ignicao, "ignicao", 200, NULL, 1, NULL);
+    xTaskCreate(ignicao, "ignicao", 1024, NULL, 1, NULL);
 }
 
 void menu(std::string data) {
@@ -164,6 +176,16 @@ bool configurarCalibracao()
     return eeprom.setNumberCalibration(balanca.getScale());
 }
 
+bool configurarStandalone()
+{
+    std::string msg = "para configurar o modo standalone preencha 0(false) ou 1(true) ou escreve diretamente true ou false\n\n standalone = " + std::to_string(eeprom.getstandalone());
+
+    bluetooth.sendMsg(msg);
+    bool standalone = stringToBool(bluetooth.receiveString("\nInforme o valor"));
+
+    return eeprom.setstandalone(standalone);
+}
+
 void printMenu() {
     bluetooth.sendMsg("Menu de opcoes do bluetooth");
     bluetooth.sendMsg("0 - Reiniciar o ESP");
@@ -188,4 +210,16 @@ std::string inputWebsocketBluetooth() {
 float inputCalibration()
 {
     return std::stof(bluetooth.receiveString("Incremente ou decremente um valor"));
+}
+
+bool stringToBool(std::string str) {
+  str.erase(0, str.find_first_not_of(" \t\n\r"));
+  str.erase(str.find_last_not_of(" \t\n\r") + 1);
+  std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+
+  if (str == "true" || str == "1" || str == "yes" || str == "on") return true;
+  if (str == "false" || str == "0" || str == "no" || str == "off") return false;
+
+  Serial.println("Aviso: valor inválido para bool -> " + String(str.c_str()));
+  return false;
 }

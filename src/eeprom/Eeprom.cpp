@@ -123,3 +123,20 @@ bool Eeprom::setNumberCalibration(float numberCalibration)
         return false;
     }
 }
+
+bool Eeprom::getstandalone()
+{
+    bool standalone = preferences.getBool("standalone", true);
+     
+    return standalone;
+}
+
+bool Eeprom::setstandalone(bool standalone)
+{
+    try {
+        preferences.putFloat("standalone", standalone);
+        return true;
+    } catch(...) {
+        return false;
+    }
+}

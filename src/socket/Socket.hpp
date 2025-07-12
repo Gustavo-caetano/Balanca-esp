@@ -13,7 +13,7 @@ class Socket{
 
   public:
     Socket();
-    void iniciar(std::string  server);
+    void iniciar(std::string  server, bool standalone);
     bool hasClient();
     void resetTime();
     void sendData(float peso, bool ativo);

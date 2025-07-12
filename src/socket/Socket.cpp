@@ -2,10 +2,10 @@
 
 Socket::Socket() : tempo(0), connected(false) {}
 
-void Socket::iniciar(std::string server)
+void Socket::iniciar(std::string server, bool standalone)
 {
     this->host = server;
-    connectSK();
+    if(!standalone) connectSK();
 }
 
 bool Socket::hasClient()

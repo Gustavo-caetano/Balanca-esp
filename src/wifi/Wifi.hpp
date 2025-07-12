@@ -11,7 +11,7 @@ class Wifi {
 
     bool connect();
   public:
-    void init(std::vector<std::string> conexao);
+    void init(std::vector<std::string> conexao, bool standalone);
 };
 
 #endif // WIFI_HPP 

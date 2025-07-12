@@ -2,17 +2,24 @@
 #include <WiFi.h>
 #include <vector>
 
-void Wifi::init(std::vector<std::string> conexao)
+void Wifi::init(std::vector<std::string> conexao, bool standalone)
 {
     this->ssid = conexao[0];
     this->passwd = conexao[1];
 
-    connect();
+    if(!standalone) connect();
 }
 
 bool Wifi::connect()
 {
     Serial.println("Tentando conectar ao WiFi...");
+    
+    if(ssid.empty() || passwd.empty())
+    {
+        Serial.println("\nWifi ainda não configurado\ncrie uma configuração de conexão");
+        return false;
+    }
+
     WiFi.begin(ssid.c_str(), passwd.c_str());
 
     unsigned long startAttemptTime = millis();
