@@ -11,12 +11,11 @@ class Bluetooth{
     bool connected;
     void (*funcao)(std::string opcao);
 
-    void (*printMenu)();
     static void onMessage(void *pvParameters);
 
   public:
     Bluetooth();
-    void iniciar(const char* name, void (*menu)(std::string opcao),void (*printmenu)(), const bool isMaster = false);
+    void iniciar(const char* name, void (*menu)(std::string opcao),esp_spp_cb_t callback, const bool isMaster = false);
     bool hasClient();
     void resetTime();
     void sendData(float peso, bool ativo);

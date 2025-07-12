@@ -5,13 +5,16 @@
 Bluetooth::Bluetooth() 
   : tempo(0), connected(false) {}
 
-void Bluetooth::iniciar(const char* name, void (*menu)(std::string opcao),void (*printmenu)(), const bool isMaster) {
-
+void Bluetooth::iniciar(const char* name,
+                        void (*menu)(std::string opcao),
+                        esp_spp_cb_t callback,
+                        const bool isMaster)
+{
   funcao = menu;
-  printMenu = printmenu;
 
   SerialBT.begin(name, isMaster );
   Serial.println("Bluetooth iniciado");
+  SerialBT.register_callback(callback);
 }
 
 bool Bluetooth::hasClient() {

@@ -36,6 +36,7 @@ bool configurarWebsocket();
 bool configurarCalibracao();
 void handleIgnicao();
 bool stringToBool(std::string str);
+void btCallback(esp_spp_cb_event_t event, esp_spp_cb_param_t *param);
 
 void setup() {
     pinMode(PINO_IGNICAO, OUTPUT);
@@ -48,7 +49,7 @@ void setup() {
     standalone = eeprom.getstandalone();
 
     balanca.iniciar(eeprom.getNumberCalibration());
-    bluetooth.iniciar("MASTER", menuBluetooth, printMenu);
+    bluetooth.iniciar("MASTER", menuBluetooth, btCallback);
     bluetooth.onMessageThread();
     
     wifi.init(eeprom.getWifi(), standalone);
@@ -211,6 +212,13 @@ float inputCalibration()
 {
     return std::stof(bluetooth.receiveString("Incremente ou decremente um valor"));
 }
+
+void btCallback(esp_spp_cb_event_t event, esp_spp_cb_param_t *param) {
+  if (event == ESP_SPP_SRV_OPEN_EVT) {
+    printMenu();
+  }
+}
+
 
 bool stringToBool(std::string str) {
   str.erase(0, str.find_first_not_of(" \t\n\r"));
