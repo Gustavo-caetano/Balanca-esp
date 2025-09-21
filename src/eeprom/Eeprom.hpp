@@ -21,7 +21,10 @@ public:
     bool setWifi(int index , std::string newWifi);
 
     std::string getWebsocketServer();
-    bool setWebsockerServer(int index, std::string newWebsocket);
+    bool setWebsocketServer(int index, std::string newWebsocket);
+
+    std::string getWebsocketRoom();
+    bool setWebsocketRoom(std::string newWebsocketRoom);
 
     float getNumberCalibration();
     bool setNumberCalibration(float numberCalibration);

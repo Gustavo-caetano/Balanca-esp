@@ -30,11 +30,13 @@ void ignicao(void *par);
 void printMenu();
 std::string inputWifiBluetooth();
 std::string inputWebsocketBluetooth();
+std::string inputWebsocketRoomBluetooth();
 float inputCalibration();
 bool configurarWifi();
 bool configurarWebsocket();
 bool configurarCalibracao();
 bool configurarStandalone();
+bool configurarRoom();
 void handleIgnicao();
 bool stringToBool(std::string str);
 void btCallback(esp_spp_cb_event_t event, esp_spp_cb_param_t *param);
@@ -54,7 +56,7 @@ void setup() {
     bluetooth.onMessageThread();
     
     wifi.init(eeprom.getWifi(), standalone);
-    socket.iniciar(eeprom.getWebsocketServer(), standalone);
+    socket.iniciar(eeprom.getWebsocketServer(), eeprom.getWebsocketRoom(), standalone);
     socket.onMenssage(menu);
     
 }
@@ -151,10 +153,18 @@ void menuBluetooth(std::string opcao) {
         case 6:
             if(configurarStandalone())
             {
-                bluetooth.sendMsg("Calibracao standalone com sucesso");
+                bluetooth.sendMsg("Modo standalone configurado com sucesso");
                 ESP.restart();
             }else {
-                bluetooth.sendMsg("Erro ao standalone a calibracao");
+                bluetooth.sendMsg("Erro ao configurar standalone");
+            }
+        case 7:
+            if(configurarRoom())
+            {
+                bluetooth.sendMsg("Sala Websocket configurado com sucesso");
+                ESP.restart();
+            }else {
+                bluetooth.sendMsg("Erro ao configurar a sala");
             }
         case 9:
             printMenu();
@@ -174,7 +184,7 @@ bool configurarWifi() {
 bool configurarWebsocket() {
     bluetooth.sendMsg(eeprom.getWebsocketServers());
     int indexSelecionado = std::stoi(bluetooth.receiveString("Informe o index desejado"));
-    return eeprom.setWebsockerServer(indexSelecionado, inputWebsocketBluetooth());
+    return eeprom.setWebsocketServer(indexSelecionado, inputWebsocketBluetooth());
 }
 
 bool configurarCalibracao()
@@ -197,6 +207,14 @@ bool configurarStandalone()
     return eeprom.setstandalone(standalone);
 }
 
+bool configurarRoom()
+{
+    std::string msg = "Opção de configurar sala \n id da sala atual: " + eeprom.getWebsocketRoom();
+    bluetooth.sendMsg(msg);
+    
+    return eeprom.setWebsocketRoom(inputWebsocketRoomBluetooth());
+}
+
 void printMenu() {
     bluetooth.sendMsg(
     "Menu de opcoes do bluetooth\n"
@@ -206,7 +224,8 @@ void printMenu() {
     "3 - Configurar WebSocket\n"
     "4 - Informar a config padrao\n"
     "5 - Configurar calibracao\n"
-    "6 - Configurar modo standalone"
+    "6 - Configurar modo standalone\n"
+    "7 - Configurar room webSocket"
     );
 }
 
@@ -219,6 +238,10 @@ std::string inputWifiBluetooth() {
 
 std::string inputWebsocketBluetooth() {
     return bluetooth.receiveString("Informe a URL do WebSocket");
+}
+
+std::string inputWebsocketRoomBluetooth() {
+    return bluetooth.receiveString("Informe a Sala do WebSocket");
 }
 
 float inputCalibration()

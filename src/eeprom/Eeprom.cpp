@@ -84,7 +84,7 @@ std::string Eeprom::getWebsocketServer() {
     }
 }
 
-bool Eeprom::setWebsockerServer(int index, std::string newWebsocket) {
+bool Eeprom::setWebsocketServer(int index, std::string newWebsocket) {
     try {
         std::string socketData = preferences.getString("socket", "").c_str();
         std::vector<std::string> sockets = StringUtils::split(socketData);
@@ -106,6 +106,23 @@ bool Eeprom::setWebsockerServer(int index, std::string newWebsocket) {
     }
     return false;
 }
+
+
+std::string Eeprom::getWebsocketRoom() {
+    std::string socketDataRoom = preferences.getString("room", "").c_str();
+    return socketDataRoom;
+}
+
+bool Eeprom::setWebsocketRoom(std::string newWebsocketRoom) {
+    try {
+        preferences.putString("room", newWebsocketRoom.c_str());
+        return true;
+    } catch (...) {
+        Serial.println("Erro ao definir WebSocket Server");
+    }
+    return false;
+}
+
 
 float Eeprom::getNumberCalibration()
 {

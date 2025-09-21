@@ -2,9 +2,10 @@
 
 Socket::Socket() : tempo(0), connected(false) {}
 
-void Socket::iniciar(std::string server, bool standalone)
+void Socket::iniciar(std::string server, std::string room, bool standalone)
 {
     this->host = server;
+    this->room = room;
     if(!standalone) connectSK();
 }
 
@@ -27,9 +28,13 @@ void Socket::sendData(float peso, bool ativo)
     }
     
     JsonDocument doc;
-    doc["Tempo"] = millis() - tempo;
-    doc["Peso"] = peso;
-    doc["Ativo"] = ativo;
+
+    doc["sala"] = room;
+
+    JsonObject valor = doc.createNestedObject("valor");
+    valor["Tempo"] = millis() - tempo;
+    valor["Peso"] = peso;
+    valor["Ativo"] = ativo;
 
     std::string output;
     serializeJson(doc, output);

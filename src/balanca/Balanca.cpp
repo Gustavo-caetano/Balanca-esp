@@ -18,7 +18,8 @@ float Balanca::getPeso()
 {
 
   scale.set_scale(calibrationFactor);
-  float peso = scale.get_units() * 1000;
+  // float peso = scale.get_units() * 1000;
+  float peso = random(10, 500);
   active = peso > 10;
 
   return peso;

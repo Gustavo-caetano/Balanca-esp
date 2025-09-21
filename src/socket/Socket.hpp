@@ -10,10 +10,11 @@ class Socket{
     unsigned long tempo;
     bool connected;
     std::string host;
+    std::string room;
 
   public:
     Socket();
-    void iniciar(std::string  server, bool standalone);
+    void iniciar(std::string server, std::string room, bool standalone);
     bool hasClient();
     void resetTime();
     void sendData(float peso, bool ativo);
