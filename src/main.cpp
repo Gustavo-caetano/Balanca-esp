@@ -4,7 +4,7 @@
 #include "utils/stringutils/StringUtils.hpp"
 #include "socket/Socket.hpp"
 #include "balanca/Balanca.hpp"
-#include "wifi/Wifi.hpp"
+#include "wifi/Wifi_ESP.hpp"
 #include "bluetooth/Bluetooth.hpp"
 #include "eeprom/Eeprom.hpp"
 #include "ota/OtaUpdate.hpp"

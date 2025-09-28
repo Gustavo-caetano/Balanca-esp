@@ -1,6 +1,6 @@
 #include "Bluetooth.hpp"
 
-#include "StringUtils.hpp"
+#include "../utils/stringutils/StringUtils.hpp"
 
 Bluetooth::Bluetooth() 
   : tempo(0), connected(false) {}

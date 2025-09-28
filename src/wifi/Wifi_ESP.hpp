@@ -1,5 +1,5 @@
-#ifndef WIFI_HPP
-#define WIFI_HPP
+#ifndef WIFI_ESP_HPP
+#define WIFI_ESP_HPP
 
 #include <WiFi.h>
 #include <vector>
@@ -14,4 +14,4 @@ class Wifi {
     void init(std::vector<std::string> conexao, bool standalone);
 };
 
-#endif // WIFI_HPP 
+#endif // WIFI_ESP_HPP
