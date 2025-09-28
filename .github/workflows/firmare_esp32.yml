@@ -36,13 +36,13 @@ jobs:
         run: pip install --upgrade platformio
 
       - name: Build PlatformIO Project
-        run: pio run -D VERSION=${{ needs.get_version.outputs.version }}
+        run: pio run
 
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v4
         with:
           name: firmware
-          path: .pio/build/esp32dev/firmware.bin  # ajuste o caminho conforme seu projeto
+          path: .pio/build/esp32dev/firmware.bin
 
   deploy:
     runs-on: ubuntu-latest
