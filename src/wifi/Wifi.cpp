@@ -2,17 +2,19 @@
 #include <WiFi.h>
 #include <vector>
 
+
 void Wifi::init(std::vector<std::string> conexao, bool standalone)
 {
     this->ssid = conexao[0];
     this->passwd = conexao[1];
 
-    if(!standalone) connect();
+    // if(!standalone) connect();
+    connect();
 }
 
 bool Wifi::connect()
 {
-    Serial.println("Tentando conectar ao WiFi...");
+    Serial.println("Tentando conectar ao WiFi... nova versao");
     
     if(ssid.empty() || passwd.empty())
     {

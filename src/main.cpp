@@ -7,7 +7,7 @@
 #include "wifi/Wifi.hpp"
 #include "bluetooth/Bluetooth.hpp"
 #include "eeprom/Eeprom.hpp"
-#include "monitor/Monitor.hpp"
+#include "ota/OtaUpdate.hpp"
 
 // Definições e Constantes
 const int PINO_IGNICAO = 2;
@@ -22,6 +22,7 @@ Balanca balanca;
 Wifi wifi;
 Bluetooth bluetooth;
 Eeprom eeprom;
+OtaUpdate otaUpdate;
 
 // Declaração de Funções
 void menu(std::string opcao);
@@ -47,18 +48,21 @@ void setup() {
     Serial.println("Inicializando...");
     eeprom.iniciar(NAMESPACE_EEPROM);
     
-    // Monitor::monitorTask();
+    wifi.init(eeprom.getWifi(), standalone);
 
+    otaUpdate.iniciar("http://192.168.0.140:7777/firmware.bin");
+
+    otaUpdate.atualizarHTTP();
+    
     standalone = eeprom.getstandalone();
 
     balanca.iniciar(eeprom.getNumberCalibration());
+
     bluetooth.iniciar("MASTER", menuBluetooth, btCallback);
     bluetooth.onMessageThread();
-    
-    wifi.init(eeprom.getWifi(), standalone);
     socket.iniciar(eeprom.getWebsocketServer(), eeprom.getWebsocketRoom(), standalone);
     socket.onMenssage(menu);
-    
+
 }
 
 void loop() {
