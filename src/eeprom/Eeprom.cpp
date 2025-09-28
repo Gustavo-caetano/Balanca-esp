@@ -1,5 +1,5 @@
 #include "Eeprom.hpp"
-#include "../utils/Stringutils/StringUtils.hpp"
+#include "StringUtils.hpp"
 
 void Eeprom::iniciar(std::string nameSpace) {
     preferences.begin(nameSpace.c_str(), false);
