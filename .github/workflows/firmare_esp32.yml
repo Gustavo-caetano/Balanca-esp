@@ -65,5 +65,5 @@ jobs:
           private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           folder: bin_esp32/firmware
-          target: bin_esp32/firmware/firmware_${{ needs.get_version.outputs.version }}.bin
+          target: ${{ secrets.TARGET }}/firmware_${{ needs.get_version.outputs.version }}.bin
           commands: cd bin_esp32/script ; ./update.sh ${{ needs.get_version.outputs.version }}
