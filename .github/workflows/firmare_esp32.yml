@@ -45,7 +45,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: firmware
-          path: $GITHUB_WORKSPACE/firmware.bin
+          path: .pio/build/mhetesp32devkit/firmware.bin
 
   deploy:
     runs-on: ubuntu-latest
