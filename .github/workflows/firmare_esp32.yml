@@ -3,7 +3,7 @@ name: PlatformIO CI/CD
 on:
   push:
     tags:
-      - '*'
+      - '*'   # roda para qualquer tag
 
 jobs:
   get_version:
@@ -23,15 +23,18 @@ jobs:
     needs: get_version
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/cache@v4
         with:
           path: |
             ~/.cache/pip
             ~/.platformio/.cache
           key: ${{ runner.os }}-pio
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
       - name: Install PlatformIO Core
         run: pip install --upgrade platformio
 
@@ -42,11 +45,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: firmware
-          path: .pio/build/mhetesp32devkit/firmware.bin
+          path: $GITHUB_WORKSPACE/firmware.bin
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build
+    needs:
+      - build
+      - get_version
     steps:
       - name: Get tag version
         run: echo "VERSION=${{ needs.get_version.outputs.version }}"
@@ -55,7 +60,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: firmware
-          path: bin_esp32
+          path: $GITHUB_WORKSPACE/
 
       - name: Deploy firmware to server
         uses: Gustavo-caetano/sshcloudflareddeploy@1.7
@@ -64,6 +69,6 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          folder: bin_esp32/firmware/firmware.bin
+          folder: $GITHUB_WORKSPACE/firmware.bin
           target: ${{ secrets.TARGET }}/firmware_${{ needs.get_version.outputs.version }}.bin
           commmand: cd bin_esp32/script ; ./update.sh ${{ needs.get_version.outputs.version }}
