@@ -48,11 +48,18 @@ void setup() {
     Serial.println("Inicializando...");
     eeprom.iniciar(NAMESPACE_EEPROM);
     
+    std::string version = eeprom.getVersion();
+
+    if(version == "") {
+        eeprom.setVersion(VERSIONFIRMWARE);
+        version = VERSIONFIRMWARE;
+    }
+
     wifi.init(eeprom.getWifi(), standalone);
 
-    otaUpdate.iniciar("http://192.168.0.140:7777/firmware.bin");
+    otaUpdate.iniciar("https://rocket.guugascode.site");
 
-    otaUpdate.atualizarHTTP();
+    otaUpdate.atualizarHTTP(version);
     
     standalone = eeprom.getstandalone();
 

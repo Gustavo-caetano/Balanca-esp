@@ -1,13 +1,52 @@
 #include "OtaUpdate.hpp"
 
+#include "./utils/versionutils/VersionUtils.hpp"
+
 #include <Arduino.h>  
+#include <ArduinoJson.h>
 
 void OtaUpdate::iniciar(const char* firmwareUrl) {
-    this->firmwareUrl = String(firmwareUrl);
+    this->firmwareUrl = firmwareUrl;
 }
 
-bool OtaUpdate::atualizarHTTP() {
-    Serial.println("Iniciando HTTP OTA...");
+FirmwareInfo OtaUpdate::getFirmwareInfo(const char* url) {
+  FirmwareInfo info = {"", ""};
+
+  HTTPClient http;
+  http.begin(url);
+  int httpCode = http.GET();
+
+  if (httpCode == HTTP_CODE_OK) {
+    String payload = http.getString();
+
+    JsonDocument doc;
+    DeserializationError error = deserializeJson(doc, payload);
+
+    if (!error) {
+      info.version = doc["version"] | "";
+      info.firmware = doc["firmware"] | "";
+    } else {
+      Serial.print("Erro ao parsear JSON: ");
+      Serial.println(error.c_str());
+    }
+  } else {
+    Serial.printf("Falha HTTP, code: %d\n", httpCode);
+  }
+
+  http.end();
+  return info;
+}
+
+bool OtaUpdate::atualizarHTTP(std::string version) {
+    Serial.println("Iniciando HTTP OTA... \nObtendo versão do servidor");
+
+
+    std::string url = firmwareUrl + "/version";
+    FirmwareInfo data = getFirmwareInfo(url.c_str());
+    if(VersionUtils::isVersionGreaterOrEqual(version, data.version.c_str())) {
+        Serial.println(("versao atual: " + version + " é a mais recente").c_str());
+        return false;
+    }
 
     if (WiFi.status() != WL_CONNECTED) {
         Serial.println("WiFi não conectado!");
@@ -21,7 +60,7 @@ bool OtaUpdate::atualizarHTTP() {
     }
 
     HTTPClient http;
-    if (!http.begin(firmwareUrl)) {
+    if (!http.begin((firmwareUrl + "/firmware/" + data.firmware).c_str())) {
         Serial.println("Falha ao iniciar HTTP");
         return false;
     }

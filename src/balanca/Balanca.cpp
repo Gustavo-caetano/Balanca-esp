@@ -4,7 +4,7 @@
 const short pinDT = 26;
 const short pinSCK = 27;
 
-Balanca::Balanca() : active(false) {}
+Balanca::Balanca() : active(false), calibrationFactor(0){}
 
 void Balanca::iniciar(float calibrationFactor)
 {

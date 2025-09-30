@@ -8,14 +8,17 @@
 #include <WiFi.h>
 #include "Arduino.h"
 
+struct FirmwareInfo {
+  std::string version;
+  std::string firmware;
+};
 class OtaUpdate {
 private:
-    String firmwareUrl;
-
+    std::string firmwareUrl;
+    FirmwareInfo getFirmwareInfo(const char* url);
 public:
     void iniciar(const char* firmwareUrl);
-    bool atualizarHTTP();
-    void atualizarHTTPAsync();
+    bool atualizarHTTP(std::string version);
 };
 
 #endif // OTAUPDATE_HPP

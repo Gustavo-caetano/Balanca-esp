@@ -8,7 +8,6 @@ void Wifi::init(std::vector<std::string> conexao, bool standalone)
     this->ssid = conexao[0];
     this->passwd = conexao[1];
 
-    // if(!standalone) connect();
     connect();
 }
 

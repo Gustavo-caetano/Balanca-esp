@@ -31,7 +31,7 @@ void Socket::sendData(float peso, bool ativo)
 
     doc["sala"] = room;
 
-    JsonObject valor = doc.createNestedObject("valor");
+    JsonObject valor = doc["valor"].to<JsonObject>();
     valor["Tempo"] = millis() - tempo;
     valor["Peso"] = peso;
     valor["Ativo"] = ativo;
