@@ -37,7 +37,7 @@ FirmwareInfo OtaUpdate::getFirmwareInfo(const char* url) {
   return info;
 }
 
-bool OtaUpdate::atualizarHTTP(std::string version) {
+std::string OtaUpdate::atualizarHTTP(std::string version) {
     Serial.println("Iniciando HTTP OTA... \nObtendo versão do servidor");
 
 
@@ -45,31 +45,31 @@ bool OtaUpdate::atualizarHTTP(std::string version) {
     FirmwareInfo data = getFirmwareInfo(url.c_str());
     if(VersionUtils::isVersionGreaterOrEqual(version, data.version.c_str())) {
         Serial.println(("versao atual: " + version + " é a mais recente").c_str());
-        return false;
+        return "";
     }
 
     if (WiFi.status() != WL_CONNECTED) {
         Serial.println("WiFi não conectado!");
-        return false;
+        return "";
     }
 
     Serial.printf("Heap livre: %u bytes\n", ESP.getFreeHeap());
     if (ESP.getFreeHeap() < 40000) {
         Serial.println("Heap insuficiente para OTA HTTP");
-        return false;
+        return "";
     }
 
     HTTPClient http;
     if (!http.begin((firmwareUrl + "/firmware/" + data.firmware).c_str())) {
         Serial.println("Falha ao iniciar HTTP");
-        return false;
+        return "";
     }
 
     int httpCode = http.GET();
     if (httpCode != HTTP_CODE_OK) {
         Serial.printf("Erro HTTP: %d\n", httpCode);
         http.end();
-        return false;
+        return "";
     }
 
     int contentLength = http.getSize();
@@ -81,7 +81,7 @@ bool OtaUpdate::atualizarHTTP(std::string version) {
     if (!Update.begin(contentLength > 0 ? contentLength : UPDATE_SIZE_UNKNOWN)) {
         Serial.println("Espaço insuficiente para OTA.");
         http.end();
-        return false;
+        return "";
     }
 
     size_t written = 0;
@@ -95,7 +95,7 @@ bool OtaUpdate::atualizarHTTP(std::string version) {
             Serial.println("Erro: Timeout durante OTA");
             Update.abort();
             http.end();
-            return false;
+            return "";
         }
 
         size_t size = client->available();
@@ -133,11 +133,11 @@ bool OtaUpdate::atualizarHTTP(std::string version) {
     if (!Update.end() || !Update.isFinished()) {
         Serial.printf("Erro Update.end(): %s\n", Update.errorString());
         http.end();
-        return false;
+        return "";
     }
 
     Serial.println("\nUpdate HTTP concluído. Reiniciando...");
     http.end();
-    ESP.restart();
-    return true;
+    return data.version;
+
 }

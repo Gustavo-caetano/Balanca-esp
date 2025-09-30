@@ -18,7 +18,7 @@ private:
     FirmwareInfo getFirmwareInfo(const char* url);
 public:
     void iniciar(const char* firmwareUrl);
-    bool atualizarHTTP(std::string version);
+    std::string atualizarHTTP(std::string version);
 };
 
 #endif // OTAUPDATE_HPP

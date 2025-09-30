@@ -59,7 +59,10 @@ void setup() {
 
     otaUpdate.iniciar("https://rocket.guugascode.site");
 
-    otaUpdate.atualizarHTTP(version);
+    std::string versionUpdate = otaUpdate.atualizarHTTP(version);
+    if(versionUpdate != "") {
+        eeprom.setVersion(versionUpdate);
+    }
     
     standalone = eeprom.getstandalone();
 
