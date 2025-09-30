@@ -62,6 +62,7 @@ void setup() {
     std::string versionUpdate = otaUpdate.atualizarHTTP(version);
     if(versionUpdate != "") {
         eeprom.setVersion(versionUpdate);
+        ESP.restart();
     }
     
     standalone = eeprom.getstandalone();
